@@ -28,6 +28,15 @@ Open http://localhost:8080 and sign in with `admin` / `Passw0rd!` (read and writ
 
 Prerequisites: [.NET SDK 10](https://dotnet.microsoft.com/download) and [Node.js 22+](https://nodejs.org/).
 
+From the repository root, one command starts both the API and the front end:
+
+```bash
+npm install     # also installs the client's dependencies
+npm run dev     # API on http://localhost:5157, UI on http://localhost:4200
+```
+
+Or start them separately in two terminals:
+
 ```bash
 # 1. API: http://localhost:5157 (creates and migrates products.db on first run)
 dotnet run --project src/Products.Api --launch-profile http

@@ -1,0 +1,15 @@
+{
+  "name": "product-web-api",
+  "private": true,
+  "description": "Convenience scripts to run the Products API and Angular client together.",
+  "scripts": {
+    "postinstall": "npm --prefix client install",
+    "dev": "concurrently --kill-others-on-fail --names api,web --prefix-colors blue,magenta \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "dotnet run --project src/Products.Api --launch-profile http",
+    "dev:web": "npm --prefix client start",
+    "test": "dotnet test Products.slnx && npm --prefix client test -- --watch=false"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

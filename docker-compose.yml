@@ -1,0 +1,33 @@
+# Local demo stack: http://localhost:8080
+# Secrets come from environment variables (or a .env file next to this one); demo defaults are provided for convenience only.
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/Products.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Database__MigrateOnStartup: "true"
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-docker-demo-signing-key-change-me-0123456789}
+      Auth__Users__0__Username: admin
+      Auth__Users__0__Password: ${ADMIN_PASSWORD:-Passw0rd!}
+      Auth__Users__0__Scopes__0: products.read
+      Auth__Users__0__Scopes__1: products.write
+      Auth__Users__1__Username: viewer
+      Auth__Users__1__Password: ${VIEWER_PASSWORD:-Passw0rd!}
+      Auth__Users__1__Scopes__0: products.read
+    volumes:
+      - products-data:/app/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: client
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  products-data:

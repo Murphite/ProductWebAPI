@@ -1,0 +1,61 @@
+@if (canWrite()) {
+  <section class="card">
+    <h2>New product</h2>
+    <app-product-form (created)="onCreated($event)" />
+    @if (notice(); as message) {
+      <p class="alert success" role="status">{{ message }}</p>
+    }
+  </section>
+}
+
+<section class="card">
+  <div class="toolbar">
+    <h2>Products</h2>
+    <div class="filter">
+      <label for="colour-filter" class="sr-only">Filter by colour</label>
+      <input id="colour-filter" type="search" placeholder="Filter by colour…" [formControl]="colourFilter" />
+      @if (colourFilter.value) {
+        <button type="button" (click)="clearFilter()">Clear</button>
+      }
+    </div>
+  </div>
+
+  @for (error of errors(); track error) {
+    <p class="alert error" role="alert">{{ error }}</p>
+  }
+
+  @if (loading()) {
+    <p class="muted" aria-live="polite">Loading…</p>
+  } @else if (products().length === 0 && errors().length === 0) {
+    <p class="muted">
+      @if (colourFilter.value.trim()) {
+        No products found with colour "{{ colourFilter.value.trim() }}".
+      } @else {
+        No products yet.
+      }
+    </p>
+  } @else if (products().length > 0) {
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Colour</th>
+          <th scope="col" class="num">Price</th>
+          <th scope="col">Description</th>
+          <th scope="col">Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of products(); track product.id) {
+          <tr>
+            <td>{{ product.name }}</td>
+            <td><span class="chip">{{ product.colour }}</span></td>
+            <td class="num">{{ product.price | currency: 'GBP' }}</td>
+            <td>{{ product.description ?? '—' }}</td>
+            <td>{{ product.createdAt | date: 'medium' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

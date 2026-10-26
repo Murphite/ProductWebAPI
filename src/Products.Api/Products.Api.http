@@ -1,0 +1,29 @@
+@baseUrl = http://localhost:5157
+
+### Health (anonymous)
+GET {{baseUrl}}/health
+
+### Get a token
+# @name login
+POST {{baseUrl}}/api/v1/auth/token
+Content-Type: application/json
+
+{ "username": "admin", "password": "Passw0rd!" }
+
+###
+@token = {{login.response.body.accessToken}}
+
+### Create a product
+POST {{baseUrl}}/api/v1/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Fire truck", "description": "Toy", "colour": "Red", "price": 49.99 }
+
+### List all products
+GET {{baseUrl}}/api/v1/products
+Authorization: Bearer {{token}}
+
+### List products by colour
+GET {{baseUrl}}/api/v1/products?colour=red
+Authorization: Bearer {{token}}

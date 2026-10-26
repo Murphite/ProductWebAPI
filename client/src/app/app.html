@@ -1,0 +1,13 @@
+<header class="app-header">
+  <span class="brand">Products</span>
+  @if (auth.isAuthenticated()) {
+    <span class="user">
+      Signed in as <strong>{{ auth.username() }}</strong>
+      <button type="button" (click)="logout()">Sign out</button>
+    </span>
+  }
+</header>
+
+<main class="container">
+  <router-outlet />
+</main>

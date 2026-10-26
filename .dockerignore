@@ -1,0 +1,8 @@
+**/bin
+**/obj
+**/*.db
+client
+tests
+.git
+.vs
+.vscode

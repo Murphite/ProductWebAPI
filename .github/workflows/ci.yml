@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  api:
+    name: API build & tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet restore Products.slnx
+      - run: dotnet build Products.slnx --no-restore -c Release
+      - run: dotnet test Products.slnx --no-build -c Release --logger trx --collect:"XPlat Code Coverage"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-results
+          path: tests/**/TestResults/**
+
+  client:
+    name: Angular build & tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+      - run: npx ng test --watch=false
+      - run: npx ng build --configuration production
+
+  docker:
+    name: Docker images build
+    runs-on: ubuntu-latest
+    needs: [api, client]
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose build
